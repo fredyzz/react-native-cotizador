@@ -2,13 +2,19 @@ import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../utils/colors';
 
-const Footer = ({calculate}) => (
-  <View style={styles.viewFooter}>
-    <TouchableOpacity style={styles.button} onPress={calculate}>
-      <Text style={styles.text}>CALCULAR</Text>
-    </TouchableOpacity>
-  </View>
-);
+const Footer = ({calculate, setButtonPressed}) => {
+  const onPress = () => {
+    setButtonPressed(true);
+    calculate();
+  };
+  return (
+    <View style={styles.viewFooter}>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.text}>CALCULAR</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   viewFooter: {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
 import colors from './src/utils/colors';
 import Form from './src/components/Form';
 import Footer from './src/components/Footer';
+import ResultCalculation from './src/components/ResultCalculation';
 
 LogBox.ignoreLogs(['Picker has been extracted']);
 
@@ -20,15 +21,21 @@ const App = () => {
   const [interest, setInterest] = useState(null);
   const [months, setMonths] = useState(null);
   const [total, setTotal] = useState(null);
-  console.log(total);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [buttonPressed, setButtonPressed] = useState(false);
+
+  useEffect(() => {
+    capital && interest && months && buttonPressed ? calculate() : reset;
+  }, [capital, interest, months]);
 
   const calculate = () => {
+    reset();
     if (!capital) {
-      console.log('Ingrese el monto solicitado');
+      setErrorMessage('Ingrese el monto solicitado');
     } else if (!interest) {
-      console.log('Ingrese el interés');
+      setErrorMessage('Ingrese el interés');
     } else if (!months) {
-      console.log('Ingrese la cantidad de meses');
+      setErrorMessage('Ingrese la cantidad de meses');
     } else {
       const i = interest / 100;
       const fee = capital / ((1 - Math.pow(i + 1, -months)) / i);
@@ -37,6 +44,11 @@ const App = () => {
         totalPayable: (fee * months).toFixed(2).replace('.', ','),
       });
     }
+  };
+
+  const reset = () => {
+    setErrorMessage('');
+    setTotal(null);
   };
 
   return (
@@ -52,10 +64,14 @@ const App = () => {
         />
       </SafeAreaView>
 
-      <View>
-        <Text>Resultado</Text>
-      </View>
-      <Footer calculate={calculate} />
+      <ResultCalculation
+        errorMessage={errorMessage}
+        capital={capital}
+        interest={interest}
+        months={months}
+        total={total}
+      />
+      <Footer calculate={calculate} setButtonPressed={setButtonPressed} />
     </>
   );
 };
